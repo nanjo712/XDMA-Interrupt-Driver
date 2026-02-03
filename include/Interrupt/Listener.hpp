@@ -2,7 +2,10 @@
 
 #include <array>
 #include <asio.hpp>
+#include <cstdint>
 #include <functional>
+#include <future>
+#include <memory>
 #include <shared_mutex>
 
 #include "Controller.hpp"
@@ -10,13 +13,13 @@
 namespace Interrupt
 {
     using Handler = std::function<void(uint64_t)>;
-    class Listener
+    class Listener : public std::enable_shared_from_this<Listener>
     {
        private:
         Controller& controller;
         asio::io_context& io_context;
         mutable std::shared_mutex mutex;
-        std::array<Handler, 512>
+        std::array<std::shared_ptr<Handler>, 512>
             handlers;  // 512 interrupt handler should be enough for most system
 
         struct BankListener
@@ -36,11 +39,16 @@ namespace Interrupt
         void start(BankListener& listener);
         void processInterrupt(uint32_t bank) const;
 
-       public:
         Listener(Controller& controller, asio::io_context& io_context);
+
+       public:
+        static std::shared_ptr<Listener> create(Controller& controller,
+                                                asio::io_context& io_context);
         ~Listener();
 
         void registerHandler(uint32_t interruptNumber, Handler handler);
         void unregisterHandler(uint32_t interruptNumber);
+
+        std::future<uint64_t> waitForInterrupt(uint32_t interruptNumber);
     };
 }  // namespace Interrupt

@@ -1,7 +1,10 @@
 #include "Interrupt/Listener.hpp"
 
 #include <cerrno>
+#include <cstdint>
+#include <future>
 #include <iostream>
+#include <memory>
 
 #include "Interrupt/Controller.hpp"
 
@@ -28,6 +31,12 @@ namespace Interrupt
         }
     }
 
+    std::shared_ptr<Listener> Listener::create(Controller& controller,
+                                               asio::io_context& io_context)
+    {
+        return std::shared_ptr<Listener>(new Listener(controller, io_context));
+    }
+
     Listener::~Listener()
     {
         for (auto& bl : bankListeners)
@@ -45,9 +54,10 @@ namespace Interrupt
 
     void Listener::start(BankListener& listener)
     {
+        auto self = shared_from_this();
         listener.descriptor.async_read_some(
             asio::buffer(&listener.irq_buf, 4),
-            [this, &listener](auto& e, auto bytes_transferred)
+            [this, &listener, self](auto& e, auto bytes_transferred)
             {
                 if (!e)
                 {
@@ -71,20 +81,24 @@ namespace Interrupt
             {
                 uint32_t irq_id = bank * 32 + bit;
                 uint64_t mailbox_data = controller.getMailbox(irq_id);
+                std::shared_ptr<Handler> handler = nullptr;
                 {
                     std::shared_lock lock(mutex);
                     if (irq_id < handlers.size() && handlers[irq_id])
                     {
-                        try
-                        {
-                            handlers[irq_id](mailbox_data);
-                        }
-                        catch (const std::exception& e)
-                        {
-                            std::cerr << "Exception in interrupt handler for "
-                                      << irq_id << ": " << e.what()
-                                      << std::endl;
-                        }
+                        handler = handlers[irq_id];
+                    }
+                }
+                if (handler)
+                {
+                    try
+                    {
+                        (*handler)(mailbox_data);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        std::cerr << "Exception in interrupt handler for "
+                                  << irq_id << ": " << e.what() << std::endl;
                     }
                 }
                 controller.clearPending(irq_id);
@@ -99,7 +113,7 @@ namespace Interrupt
             throw std::out_of_range("Interrupt number out of bounds");
         }
         std::unique_lock lock(mutex);
-        handlers[interruptNumber] = handler;
+        handlers[interruptNumber] = std::make_shared<Handler>(handler);
     }
 
     void Listener::unregisterHandler(uint32_t interruptNumber)
@@ -112,4 +126,26 @@ namespace Interrupt
         handlers[interruptNumber] = nullptr;
     }
 
+    std::future<uint64_t> Listener::waitForInterrupt(uint32_t interruptNumber)
+    {
+        auto promise = std::make_shared<std::promise<uint64_t>>();
+        auto self = shared_from_this();
+        registerHandler(interruptNumber,
+                        [promise, self, interruptNumber](uint64_t data)
+                        {
+                            self->unregisterHandler(interruptNumber);
+                            try
+                            {
+                                promise->set_value(data);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                std::cerr
+                                    << "Exception in interrupt handler for "
+                                    << interruptNumber << ": " << e.what()
+                                    << std::endl;
+                            }
+                        });
+        return promise->get_future();
+    }
 }  // namespace Interrupt
