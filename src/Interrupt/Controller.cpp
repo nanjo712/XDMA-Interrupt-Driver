@@ -19,6 +19,10 @@ namespace Interrupt
         {
             registers[i] = reinterpret_cast<controlRegisters*>(
                 base + offset + i * sizeof(controlRegisters));
+        }
+
+        for (uint32_t i = 0; i < totalBanks * 32; i++)
+        {
             mailboxes[i] =
                 reinterpret_cast<uint64_t*>(mailboxBase + i * sizeof(uint64_t));
         }

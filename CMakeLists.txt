@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.29)
 
 project(Interrupt-Driver LANGUAGES C CXX)
 
+option(ENABLE_TESTS "Build the test suite" OFF)
+
 find_package(Threads REQUIRED)
 
 include(FetchContent)
@@ -24,3 +26,7 @@ target_include_directories(Interrupt-Driver PRIVATE include)
 target_include_directories(Interrupt-Driver PRIVATE ${asio_SOURCE_DIR}/asio/include)
 target_compile_definitions(Interrupt-Driver PRIVATE ASIO_STANDALONE)
 target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
+
+if (ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
