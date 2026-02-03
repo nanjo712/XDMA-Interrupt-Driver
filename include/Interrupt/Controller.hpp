@@ -21,14 +21,14 @@ namespace Interrupt
        public:
         Controller(uintptr_t base, uint32_t offset = 0x1000,
                    uint32_t totalBanks = 1);
-        Index getBankIndex(uint32_t interruptNumber);
+        Index getBankIndex(uint32_t interruptNumber) const;
         void enable(uint32_t interruptNumber);
         void disable(uint32_t interruptNumber);
-        bool isEnabled(uint32_t interruptNumber);
-        uint64_t getMailbox(uint32_t interruptNumber);
+        bool isEnabled(uint32_t interruptNumber) const;
+        uint64_t getMailbox(uint32_t interruptNumber) const;
         void setPending(uint32_t interruptNumber);
         void clearPending(uint32_t interruptNumber);
-        uint32_t getPendingInterrupt(uint32_t bank);
+        uint32_t getPendingInterrupt(uint32_t bank) const;
 
        protected:
         void setMailbox(uint32_t interruptNumber, uint64_t value);

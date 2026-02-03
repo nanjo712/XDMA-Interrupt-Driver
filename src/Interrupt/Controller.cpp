@@ -24,7 +24,7 @@ namespace Interrupt
         }
     }
 
-    Controller::Index Controller::getBankIndex(uint32_t interruptNumber)
+    Controller::Index Controller::getBankIndex(uint32_t interruptNumber) const
     {
         return Index{
             .bank = (uint32_t)interruptNumber / 32,
@@ -44,13 +44,13 @@ namespace Interrupt
         registers[index.bank]->enable_clear = 1 << index.bit;
     }
 
-    bool Controller::isEnabled(uint32_t interruptNumber)
+    bool Controller::isEnabled(uint32_t interruptNumber) const
     {
         Index index = getBankIndex(interruptNumber);
         return registers[index.bank]->enable & (1 << index.bit);
     }
 
-    uint64_t Controller::getMailbox(uint32_t interruptNumber)
+    uint64_t Controller::getMailbox(uint32_t interruptNumber) const
     {
         return *mailboxes[interruptNumber];
     }
@@ -72,7 +72,7 @@ namespace Interrupt
         registers[index.bank]->status_clear = 1 << index.bit;
     }
 
-    uint32_t Controller::getPendingInterrupt(uint32_t bank)
+    uint32_t Controller::getPendingInterrupt(uint32_t bank) const
     {
         return registers[bank]->status;
     }
