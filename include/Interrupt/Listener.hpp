@@ -7,6 +7,7 @@
 #include <future>
 #include <memory>
 #include <shared_mutex>
+#include <string>
 
 #include "Controller.hpp"
 
@@ -39,10 +40,12 @@ namespace Interrupt
         void start(BankListener& listener);
         void processInterrupt(uint32_t bank) const;
 
-        Listener(Controller& controller, asio::io_context& io_context);
+        Listener(std::string& device_prefix, Controller& controller,
+                 asio::io_context& io_context);
 
        public:
-        static std::shared_ptr<Listener> create(Controller& controller,
+        static std::shared_ptr<Listener> create(std::string& device_prefix,
+                                                Controller& controller,
                                                 asio::io_context& io_context);
         ~Listener();
 

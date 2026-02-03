@@ -10,14 +10,14 @@
 
 namespace Interrupt
 {
-    Listener::Listener(Controller& controller, asio::io_context& io_context)
+    Listener::Listener(std::string& device_prefix, Controller& controller,
+                       asio::io_context& io_context)
         : controller(controller), io_context(io_context)
     {
         for (uint32_t i = 0; i < 16; ++i)
         {
-            std::string path = "/dev/xdma0_events_" + std::to_string(i);
+            std::string path = device_prefix + std::to_string(i);
             int fd = ::open(path.c_str(), O_RDONLY | O_NONBLOCK);
-
             if (fd >= 0)
             {
                 bankListeners.emplace_back(
@@ -31,10 +31,12 @@ namespace Interrupt
         }
     }
 
-    std::shared_ptr<Listener> Listener::create(Controller& controller,
+    std::shared_ptr<Listener> Listener::create(std::string& device_prefix,
+                                               Controller& controller,
                                                asio::io_context& io_context)
     {
-        return std::shared_ptr<Listener>(new Listener(controller, io_context));
+        return std::shared_ptr<Listener>(
+            new Listener(device_prefix, controller, io_context));
     }
 
     Listener::~Listener()
