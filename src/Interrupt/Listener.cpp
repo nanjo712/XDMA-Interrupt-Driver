@@ -5,26 +5,19 @@
 #include <future>
 #include <iostream>
 #include <memory>
+#include <utility>
+#include <vector>
 
 namespace Interrupt
 {
-    Listener::Listener(std::string& device_prefix, IController& controller,
+    Listener::Listener(InterruptNodeList fds, IController& controller,
                        asio::io_context& io_context)
         : controller(controller), io_context(io_context)
     {
-        for (uint32_t i = 0; i < 16; ++i)
+        for (auto&& pair : fds)
         {
-            std::string path = device_prefix + std::to_string(i);
-            int fd = ::open(path.c_str(), O_RDONLY | O_NONBLOCK);
-            if (fd >= 0)
-            {
-                bankListeners.emplace_back(
-                    std::make_unique<BankListener>(io_context, fd, i));
-            }
-            else
-            {
-                break;
-            }
+            bankListeners.emplace_back(std::make_unique<BankListener>(
+                io_context, pair.first.release(), pair.second));
         }
     }
 
@@ -36,12 +29,12 @@ namespace Interrupt
         }
     }
 
-    std::shared_ptr<Listener> Listener::create(std::string& device_prefix,
+    std::shared_ptr<Listener> Listener::create(InterruptNodeList fds,
                                                IController& controller,
                                                asio::io_context& io_context)
     {
         auto listener = std::shared_ptr<Listener>(
-            new Listener(device_prefix, controller, io_context));
+            new Listener(std::move(fds), controller, io_context));
         listener->init();
         return listener;
     }

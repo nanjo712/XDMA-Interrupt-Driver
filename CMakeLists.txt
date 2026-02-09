@@ -22,6 +22,8 @@ FetchContent_MakeAvailable(asio)
 add_library(Interrupt-Driver STATIC
     src/Interrupt/Controller.cpp
     src/Interrupt/Listener.cpp
+    src/Interrupt/InterruptNodeFinder.cpp
+    src/Interrupt/ScopedFd.cpp
 )
 target_include_directories(Interrupt-Driver PRIVATE include)
 target_include_directories(Interrupt-Driver PUBLIC ${asio_SOURCE_DIR}/asio/include)

@@ -7,18 +7,16 @@
 #include <future>
 #include <memory>
 #include <shared_mutex>
-#include <string>
+#include <vector>
 
 #include "IController.hpp"
+#include "ScopedFd.hpp"
 
 namespace Interrupt
 {
-    class ListenerTest;
-    
     using Handler = std::function<void(uint64_t)>;
     class Listener : public std::enable_shared_from_this<Listener>
     {
-        friend class ListenerTest;
        private:
         IController& controller;
         asio::io_context& io_context;
@@ -44,11 +42,11 @@ namespace Interrupt
         void processInterrupt(uint32_t bank) const;
         void init();
 
-        Listener(std::string& device_prefix, IController& controller,
+        Listener(InterruptNodeList fds, IController& controller,
                  asio::io_context& io_context);
 
        public:
-        static std::shared_ptr<Listener> create(std::string& device_prefix,
+        static std::shared_ptr<Listener> create(InterruptNodeList fds,
                                                 IController& controller,
                                                 asio::io_context& io_context);
         ~Listener();
