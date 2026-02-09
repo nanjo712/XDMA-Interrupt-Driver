@@ -33,3 +33,16 @@ target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
 if (ENABLE_TESTS)
     add_subdirectory(tests)
 endif()
+
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+    add_custom_command(
+        OUTPUT "${CMAKE_SOURCE_DIR}/compile_commands.json"
+        COMMAND ${CMAKE_COMMAND} -E create_symlink 
+                "${CMAKE_BINARY_DIR}/compile_commands.json" 
+                "${CMAKE_SOURCE_DIR}/compile_commands.json"
+        COMMENT "Linking compile_commands.json to source root"
+    )
+    # 创建一个伪目标确保它执行
+    add_custom_target(link_compile_commands ALL 
+        DEPENDS "${CMAKE_SOURCE_DIR}/compile_commands.json")
+endif()

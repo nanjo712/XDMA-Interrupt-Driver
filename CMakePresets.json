@@ -1,0 +1,49 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 19,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "test",
+            "displayName": "Testing Configuration",
+            "description": "用于开发和测试",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release Configuration",
+            "description": "用于最终发布",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_TESTS": "OFF"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "test",
+            "configurePreset": "test"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release"
+        }
+    ]
+}
