@@ -7,31 +7,11 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(test_controller Interrupt/test_controller.cpp)
-
-target_link_libraries(test_controller 
-    PRIVATE 
-        Interrupt-Driver 
-        GTest::gtest_main
+add_executable(driver_test
+    test_main.cpp
+    Interrupt/test_controller.cpp
+    Interrupt/test_listener.cpp
 )
 
-# We need to include the directories from the main library to access private headers if necessary, 
-# or just the public interface. Since we are testing internal logic which might rely on layout, 
-# ensuring we have the same include paths is good. 
-# However, Interrupt-Driver uses 'include' as a private include directory. 
-# For unit tests often we want to test public API, but here we might need access to definitions.
-# The root CMakeLists.txt adds 'include' as PRIVATE to Interrupt-Driver.
-# We should add it here too so the test file can find headers.
-target_include_directories(test_controller PRIVATE ${CMAKE_SOURCE_DIR}/include)
-
-add_executable(test_listener Interrupt/test_listener.cpp)
-target_link_libraries(test_listener 
-    PRIVATE 
-        Interrupt-Driver 
-        GTest::gtest_main
-        GTest::gmock
-)
-target_include_directories(test_listener PRIVATE ${CMAKE_SOURCE_DIR}/include)
-include(GoogleTest)
-gtest_discover_tests(test_listener)
-gtest_discover_tests(test_controller)
+target_link_libraries(driver_test PRIVATE Interrupt-Driver GTest::gtest GTest::gmock)
+target_include_directories(driver_test PRIVATE ${PROJECT_SOURCE_DIR}/include)
