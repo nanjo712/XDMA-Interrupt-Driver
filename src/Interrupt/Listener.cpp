@@ -6,11 +6,9 @@
 #include <iostream>
 #include <memory>
 
-#include "Interrupt/Controller.hpp"
-
 namespace Interrupt
 {
-    Listener::Listener(std::string& device_prefix, Controller& controller,
+    Listener::Listener(std::string& device_prefix, IController& controller,
                        asio::io_context& io_context)
         : controller(controller), io_context(io_context)
     {
@@ -22,7 +20,6 @@ namespace Interrupt
             {
                 bankListeners.emplace_back(
                     std::make_unique<BankListener>(io_context, fd, i));
-                start(*bankListeners.back());
             }
             else
             {
@@ -31,12 +28,22 @@ namespace Interrupt
         }
     }
 
+    void Listener::init()
+    {
+        for (auto& bl : bankListeners)
+        {
+            start(*bl);
+        }
+    }
+
     std::shared_ptr<Listener> Listener::create(std::string& device_prefix,
-                                               Controller& controller,
+                                               IController& controller,
                                                asio::io_context& io_context)
     {
-        return std::shared_ptr<Listener>(
+        auto listener = std::shared_ptr<Listener>(
             new Listener(device_prefix, controller, io_context));
+        listener->init();
+        return listener;
     }
 
     Listener::~Listener()

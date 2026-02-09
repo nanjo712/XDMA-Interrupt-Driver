@@ -9,15 +9,18 @@
 #include <shared_mutex>
 #include <string>
 
-#include "Controller.hpp"
+#include "IController.hpp"
 
 namespace Interrupt
 {
+    class ListenerTest;
+    
     using Handler = std::function<void(uint64_t)>;
     class Listener : public std::enable_shared_from_this<Listener>
     {
+        friend class ListenerTest;
        private:
-        Controller& controller;
+        IController& controller;
         asio::io_context& io_context;
         mutable std::shared_mutex mutex;
         std::array<std::shared_ptr<Handler>, 512>
@@ -39,13 +42,14 @@ namespace Interrupt
 
         void start(BankListener& listener);
         void processInterrupt(uint32_t bank) const;
+        void init();
 
-        Listener(std::string& device_prefix, Controller& controller,
+        Listener(std::string& device_prefix, IController& controller,
                  asio::io_context& io_context);
 
        public:
         static std::shared_ptr<Listener> create(std::string& device_prefix,
-                                                Controller& controller,
+                                                IController& controller,
                                                 asio::io_context& io_context);
         ~Listener();
 

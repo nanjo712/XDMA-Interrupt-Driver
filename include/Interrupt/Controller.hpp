@@ -4,31 +4,27 @@
 #include <vector>
 
 #include "../Hardware/InterruptRegisters.hpp"
+#include "IController.hpp"
 
 namespace Interrupt
 {
-    class Controller
+    class Controller : public IController
     {
        private:
         std::vector<controlRegisters*> registers;
         std::vector<uint64_t const*> mailboxes;
-        struct Index
-        {
-            uint32_t bank;
-            uint32_t bit;
-        };
 
        public:
         Controller(uintptr_t base, uint32_t offset = 0x1000,
                    uint32_t totalBanks = 1);
-        Index getBankIndex(uint32_t interruptNumber) const;
-        void enable(uint32_t interruptNumber);
-        void disable(uint32_t interruptNumber);
-        bool isEnabled(uint32_t interruptNumber) const;
-        uint64_t getMailbox(uint32_t interruptNumber) const;
-        void setPending(uint32_t interruptNumber);
-        void clearPending(uint32_t interruptNumber);
-        uint32_t getPendingInterrupt(uint32_t bank) const;
+        Index getBankIndex(uint32_t interruptNumber) const override;
+        void enable(uint32_t interruptNumber) override;
+        void disable(uint32_t interruptNumber) override;
+        bool isEnabled(uint32_t interruptNumber) const override;
+        uint64_t getMailbox(uint32_t interruptNumber) const override;
+        void setPending(uint32_t interruptNumber) override;
+        void clearPending(uint32_t interruptNumber) override;
+        uint32_t getPendingInterrupt(uint32_t bank) const override;
 
        protected:
         void setMailbox(uint32_t interruptNumber, uint64_t value);

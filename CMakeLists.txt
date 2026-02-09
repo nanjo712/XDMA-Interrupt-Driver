@@ -21,10 +21,11 @@ FetchContent_MakeAvailable(asio)
 
 add_library(Interrupt-Driver STATIC
     src/Interrupt/Controller.cpp
+    src/Interrupt/Listener.cpp
 )
 target_include_directories(Interrupt-Driver PRIVATE include)
-target_include_directories(Interrupt-Driver PRIVATE ${asio_SOURCE_DIR}/asio/include)
-target_compile_definitions(Interrupt-Driver PRIVATE ASIO_STANDALONE)
+target_include_directories(Interrupt-Driver PUBLIC ${asio_SOURCE_DIR}/asio/include)
+target_compile_definitions(Interrupt-Driver PUBLIC ASIO_STANDALONE)
 target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
 
 if (ENABLE_TESTS)

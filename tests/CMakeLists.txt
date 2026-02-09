@@ -24,5 +24,14 @@ target_link_libraries(test_controller
 # We should add it here too so the test file can find headers.
 target_include_directories(test_controller PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
+add_executable(test_listener Interrupt/test_listener.cpp)
+target_link_libraries(test_listener 
+    PRIVATE 
+        Interrupt-Driver 
+        GTest::gtest_main
+        GTest::gmock
+)
+target_include_directories(test_listener PRIVATE ${CMAKE_SOURCE_DIR}/include)
 include(GoogleTest)
+gtest_discover_tests(test_listener)
 gtest_discover_tests(test_controller)
