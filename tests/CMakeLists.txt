@@ -5,8 +5,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
 add_executable(driver_test
     test_main.cpp
     Interrupt/test_controller.cpp
@@ -15,3 +13,6 @@ add_executable(driver_test
 
 target_link_libraries(driver_test PRIVATE Interrupt-Driver GTest::gtest GTest::gmock)
 target_include_directories(driver_test PRIVATE ${PROJECT_SOURCE_DIR}/include)
+
+include(GoogleTest)
+gtest_discover_tests(driver_test)

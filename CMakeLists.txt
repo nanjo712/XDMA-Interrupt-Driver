@@ -31,6 +31,7 @@ target_compile_definitions(Interrupt-Driver PUBLIC ASIO_STANDALONE)
 target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
 
 if (ENABLE_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

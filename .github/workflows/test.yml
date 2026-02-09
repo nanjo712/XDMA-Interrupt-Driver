@@ -1,0 +1,29 @@
+name: CMake Build and Test
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ libasio-dev
+
+    - name: Configure CMake
+      run: cmake --preset test
+
+    - name: Build
+      run: cmake --build --preset test
+
+    - name: Run Tests
+      run: ctest --preset test 
