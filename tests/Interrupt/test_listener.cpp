@@ -27,6 +27,7 @@ namespace Interrupt
         MOCK_METHOD(void, clearPending, (uint32_t), (override));
         MOCK_METHOD(uint32_t, getPendingInterrupt, (uint32_t),
                     (const, override));
+        MOCK_METHOD(void, cleanPendingBank, (uint32_t, uint32_t), (override));
     };
 
     class ListenerTest : public Test
@@ -81,7 +82,7 @@ namespace Interrupt
 
         EXPECT_CALL(controller, getMailbox(5)).WillOnce(Return(0xCAFEBABE));
 
-        EXPECT_CALL(controller, clearPending(5)).Times(1);
+        EXPECT_CALL(controller, cleanPendingBank(0, 1 << 5)).Times(1);
 
         auto listener = createListener();
 
@@ -107,7 +108,7 @@ namespace Interrupt
 
         EXPECT_CALL(controller, getMailbox(10)).WillOnce(Return(12345));
 
-        EXPECT_CALL(controller, clearPending(10)).Times(1);
+        EXPECT_CALL(controller, cleanPendingBank(0, 1 << 10)).Times(1);
 
         auto listener = createListener();
 
@@ -127,7 +128,7 @@ namespace Interrupt
         EXPECT_CALL(controller, getPendingInterrupt(0))
             .WillOnce(Return(1 << 5));
         EXPECT_CALL(controller, getMailbox(5)).WillOnce(Return(0));
-        EXPECT_CALL(controller, clearPending(5)).Times(1);
+        EXPECT_CALL(controller, cleanPendingBank(0, 1 << 5)).Times(1);
 
         auto listener = createListener();
 

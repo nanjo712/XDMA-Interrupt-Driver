@@ -34,6 +34,10 @@ add_executable(Interrupt-Driver-Example src/Example/example_main.cpp)
 target_include_directories(Interrupt-Driver-Example PRIVATE include)
 target_link_libraries(Interrupt-Driver-Example PRIVATE Interrupt-Driver)
 
+add_executable(Interrupt-Driver-Trigger src/Example/trigger.cpp)
+target_include_directories(Interrupt-Driver-Trigger PRIVATE include)
+target_link_libraries(Interrupt-Driver-Trigger PRIVATE Interrupt-Driver)
+
 if (ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
