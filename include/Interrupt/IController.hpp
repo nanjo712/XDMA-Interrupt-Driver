@@ -23,5 +23,6 @@ namespace Interrupt
         virtual void setPending(uint32_t interruptNumber) = 0;
         virtual void clearPending(uint32_t interruptNumber) = 0;
         virtual uint32_t getPendingInterrupt(uint32_t bank) const = 0;
+        virtual void cleanPendingBank(uint32_t bank, uint32_t pending) = 0;
     };
 }  // namespace Interrupt

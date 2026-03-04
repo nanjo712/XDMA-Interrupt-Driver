@@ -80,4 +80,9 @@ namespace Interrupt
     {
         return registers[bank]->status;
     }
+
+    void Controller::cleanPendingBank(uint32_t bank, uint32_t pending)
+    {
+        registers[bank]->status_clear = pending;
+    }
 }  // namespace Interrupt

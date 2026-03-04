@@ -77,6 +77,11 @@ namespace Interrupt
     void Listener::processInterrupt(uint32_t bank) const
     {
         uint32_t pending_bits = controller.getPendingInterrupt(bank);
+        if (pending_bits == 0)
+        {
+            return;
+        }
+        controller.cleanPendingBank(bank, pending_bits);
         for (uint32_t bit = 0; bit < 32; ++bit)
         {
             if (pending_bits & (1u << bit))
@@ -103,7 +108,6 @@ namespace Interrupt
                                   << irq_id << ": " << e.what() << std::endl;
                     }
                 }
-                controller.clearPending(irq_id);
             }
         }
     }

@@ -25,6 +25,7 @@ namespace Interrupt
         void setPending(uint32_t interruptNumber) override;
         void clearPending(uint32_t interruptNumber) override;
         uint32_t getPendingInterrupt(uint32_t bank) const override;
+        void cleanPendingBank(uint32_t bank, uint32_t pending) override;
 
        protected:
         void setMailbox(uint32_t interruptNumber, uint64_t value);
