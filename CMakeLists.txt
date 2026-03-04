@@ -30,6 +30,10 @@ target_include_directories(Interrupt-Driver PUBLIC ${asio_SOURCE_DIR}/asio/inclu
 target_compile_definitions(Interrupt-Driver PUBLIC ASIO_STANDALONE)
 target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
 
+add_executable(Interrupt-Driver-Example src/Example/example_main.cpp)
+target_include_directories(Interrupt-Driver-Example PRIVATE include)
+target_link_libraries(Interrupt-Driver-Example PRIVATE Interrupt-Driver)
+
 if (ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
