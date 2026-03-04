@@ -16,6 +16,8 @@ namespace Interrupt
     {
         for (auto&& pair : fds)
         {
+            std::cout << "Creating BankListener for bank " << pair.second
+                      << std::endl;
             bankListeners.emplace_back(std::make_unique<BankListener>(
                 io_context, pair.first.release(), pair.second));
         }
@@ -25,6 +27,8 @@ namespace Interrupt
     {
         for (auto& bl : bankListeners)
         {
+            std::cout << "Initializing BankListener for bank " << bl->bank
+                      << std::endl;
             start(*bl);
         }
     }
@@ -35,6 +39,8 @@ namespace Interrupt
     {
         auto listener = std::shared_ptr<Listener>(
             new Listener(std::move(fds), controller, io_context));
+        std::cout << "Created Listener with " << listener->bankListeners.size()
+                  << " bank listeners." << std::endl;
         listener->init();
         return listener;
     }
