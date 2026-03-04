@@ -29,7 +29,7 @@ int main()
     }
     asio::io_context io_context;
     Interrupt::Controller controller((uintptr_t)map_base, OFFSET, 1);
-    auto fds = Interrupt::InterruptNodeFinder::find("/dev/xdma0_events_");
+    auto fds = Interrupt::InterruptNodeFinder::find("/dev/xdma0_events_", 1);
     std::cout << "Found " << fds.size() << " interrupt nodes." << std::endl;
     auto listener =
         Interrupt::Listener::create(std::move(fds), controller, io_context);
