@@ -20,10 +20,6 @@ int main()
             std::cout << "Interrupt 0 received with mailbox data: " << data
                       << std::endl;
         });
-    auto future = listener->waitForInterrupt(1);
-    std::cout << "Waiting for interrupt 1..." << std::endl;
-    std::cout << "Interrupt 1 received with mailbox data: " << future.get()
-              << std::endl;
     io_context.run();
     return 0;
 }
