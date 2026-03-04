@@ -33,6 +33,7 @@ int main()
     std::cout << "Found " << fds.size() << " interrupt nodes." << std::endl;
     auto listener =
         Interrupt::Listener::create(std::move(fds), controller, io_context);
+    std::cout << "Registering handler for interrupt 0..." << std::endl;
     listener->registerHandler(
         0,
         [](uint64_t data)
@@ -40,6 +41,7 @@ int main()
             std::cout << "Interrupt 0 received with mailbox data: " << data
                       << std::endl;
         });
+    std::cout << "Waiting for interrupts..." << std::endl;
     io_context.run();
     return 0;
 }
