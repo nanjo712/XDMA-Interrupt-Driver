@@ -1,14 +1,34 @@
+#include <sys/mman.h>
+
 #include <asio.hpp>
+#include <cstdint>
 #include <iostream>
 
 #include "Interrupt/Controller.hpp"
 #include "Interrupt/InterruptNodeFinder.hpp"
 #include "Interrupt/Listener.hpp"
 
+const int MAP_SIZE = 65536;
+const int OFFSET = 0x1000;
+
 int main()
 {
+    int fd = open("/dev/xdma0_user", O_RDWR | O_SYNC);
+    if (fd < 0)
+    {
+        perror("无法打开 /dev/xdma0_user");
+        return -1;
+    }
+    void* map_base =
+        mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (map_base == MAP_FAILED)
+    {
+        perror("mmap 映射失败");
+        close(fd);
+        return -1;
+    }
     asio::io_context io_context;
-    Interrupt::Controller controller(0x10000000, 0x1000, 1);
+    Interrupt::Controller controller((uintptr_t)map_base, OFFSET, 1);
     auto fds = Interrupt::InterruptNodeFinder::find("/dev/xdma0_events_");
     std::cout << "Found " << fds.size() << " interrupt nodes." << std::endl;
     auto listener =
