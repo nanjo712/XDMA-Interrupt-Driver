@@ -30,7 +30,7 @@ target_include_directories(Interrupt-Driver PUBLIC ${asio_SOURCE_DIR}/asio/inclu
 target_compile_definitions(Interrupt-Driver PUBLIC ASIO_STANDALONE)
 target_link_libraries(Interrupt-Driver PRIVATE Threads::Threads)
 
-add_executable(Interrupt-Driver-Example src/Example/example_main.cpp)
+add_executable(Interrupt-Driver-Example src/Example/main.cpp)
 target_include_directories(Interrupt-Driver-Example PRIVATE include)
 target_link_libraries(Interrupt-Driver-Example PRIVATE Interrupt-Driver)
 
@@ -38,7 +38,7 @@ add_executable(Interrupt-Driver-Trigger src/Example/trigger.cpp)
 target_include_directories(Interrupt-Driver-Trigger PRIVATE include)
 target_link_libraries(Interrupt-Driver-Trigger PRIVATE Interrupt-Driver)
 
-add_executable(Interrupt-Driver-WriteMailbox src/Example/write_mailbox.cpp)
+add_executable(Interrupt-Driver-WriteMailbox src/Example/write64.cpp)
 target_include_directories(Interrupt-Driver-WriteMailbox PRIVATE include)
 target_link_libraries(Interrupt-Driver-WriteMailbox PRIVATE Interrupt-Driver)
 
