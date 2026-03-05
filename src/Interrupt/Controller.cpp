@@ -61,7 +61,12 @@ namespace Interrupt
 
     void Controller::setMailbox(uint32_t interruptNumber, uint64_t value)
     {
-        const_cast<uint64_t&>(*mailboxes[interruptNumber]) = value;
+        Index index = getBankIndex(interruptNumber);
+        auto status = registers[index.bank]->status;
+        if ((status & (1 << index.bit)) == 0)
+        {
+            *mailboxes[interruptNumber] = value;
+        }
     }
 
     void Controller::setPending(uint32_t interruptNumber)

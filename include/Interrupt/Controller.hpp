@@ -12,7 +12,7 @@ namespace Interrupt
     {
        private:
         std::vector<controlRegisters*> registers;
-        std::vector<uint64_t const*> mailboxes;
+        std::vector<uint64_t*> mailboxes;
 
        public:
         Controller(uintptr_t base, uint32_t offset = 0x1000,
@@ -22,12 +22,10 @@ namespace Interrupt
         void disable(uint32_t interruptNumber) override;
         bool isEnabled(uint32_t interruptNumber) const override;
         uint64_t getMailbox(uint32_t interruptNumber) const override;
+        void setMailbox(uint32_t interruptNumber, uint64_t value) override;
         void setPending(uint32_t interruptNumber) override;
         void clearPending(uint32_t interruptNumber) override;
         uint32_t getPendingInterrupt(uint32_t bank) const override;
         void cleanPendingBank(uint32_t bank, uint32_t pending) override;
-
-       protected:
-        void setMailbox(uint32_t interruptNumber, uint64_t value);
     };
 }  // namespace Interrupt

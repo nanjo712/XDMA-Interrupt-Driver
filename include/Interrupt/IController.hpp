@@ -20,6 +20,7 @@ namespace Interrupt
         virtual void disable(uint32_t interruptNumber) = 0;
         virtual bool isEnabled(uint32_t interruptNumber) const = 0;
         virtual uint64_t getMailbox(uint32_t interruptNumber) const = 0;
+        virtual void setMailbox(uint32_t interruptNumber, uint64_t value) = 0;
         virtual void setPending(uint32_t interruptNumber) = 0;
         virtual void clearPending(uint32_t interruptNumber) = 0;
         virtual uint32_t getPendingInterrupt(uint32_t bank) const = 0;
