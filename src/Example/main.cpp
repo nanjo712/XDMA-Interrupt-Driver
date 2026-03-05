@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 {
     if (argc < 3)
     {
-        std::cout << "用法: ./<executable> <MAP_SIZE> <OFFSET>" << std::endl;
+        std::cout << "usage: " << argv[0] << "<MAP_SIZE> <OFFSET>" << std::endl;
         return -1;
     }
     size_t MAP_SIZE = std::stoul(argv[1], nullptr, 0);

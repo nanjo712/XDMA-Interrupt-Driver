@@ -5,23 +5,21 @@
 #include <iostream>
 #include <string>
 
-// 基于你之前的配置：
-// Vivado AXI 基地址 0x44A00000, Chisel 模块偏移 0x1000
-// 软件相对于 /dev/xdma0_user 的偏移量是 0x1000
-#define BASE_ADDR 0x1000
 #define REG_STATUS_SET (BASE_ADDR + 0x08)
 #define REG_ENABLE_SET (BASE_ADDR + 0x10)
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cout << "用法: " << argv[0] << " <中断ID (0-31)>" << std::endl;
+        std::cout << "用法: " << argv[0] << "<BASE_ADDR> <中断ID (0-31)>"
+                  << std::endl;
         return -1;
     }
 
     // 1. 解析中断 ID
-    int irq_id = std::stoi(argv[1]);
+    uint64_t BASE_ADDR = std::stoull(argv[1], nullptr, 16);
+    int irq_id = std::stoi(argv[2]);
     if (irq_id < 0 || irq_id > 31)
     {
         std::cerr << "错误: 中断 ID 超出范围 (0-31)" << std::endl;
