@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <thread>
 
 #include "Interrupt/Controller.hpp"
 #include "Interrupt/InterruptNodeFinder.hpp"
@@ -44,6 +45,15 @@ int main()
                                             << std::dec << std::endl;
                               });
     std::cout << "Waiting for interrupts..." << std::endl;
+    std::thread wait_for_interrupts(
+        [&listener]()
+        {
+            auto fut = listener->waitForInterrupt(1);
+            uint64_t data = fut.get();
+            std::cout << "[waitForInterrupt] 收到中断 1，数据: 0x" << std::hex
+                      << std::setw(16) << std::setfill('0') << data << std::dec
+                      << std::endl;
+        });
     io_context.run();
     return 0;
 }
