@@ -63,6 +63,8 @@ namespace Interrupt
     void Listener::start(BankListener& listener)
     {
         auto self = shared_from_this();
+        std::cout << "Starting async read for bank " << listener.bank
+                  << std::endl;
         listener.descriptor.async_read_some(
             asio::buffer(&listener.irq_buf, 4),
             [this, &listener, self](auto& e, auto bytes_transferred)
@@ -78,6 +80,8 @@ namespace Interrupt
                               << ": " << e.message() << std::endl;
                 }
             });
+        std::cout << "Async read initiated for bank " << listener.bank
+                  << std::endl;
     }
 
     void Listener::processInterrupt(uint32_t bank) const
