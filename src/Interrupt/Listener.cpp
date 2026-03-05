@@ -16,8 +16,6 @@ namespace Interrupt
     {
         for (auto&& pair : fds)
         {
-            std::cout << "Creating BankListener for bank " << pair.second
-                      << std::endl;
             bankListeners.emplace_back(std::make_unique<BankListener>(
                 io_context, pair.first.release(), pair.second));
         }
@@ -27,8 +25,6 @@ namespace Interrupt
     {
         for (auto& bl : bankListeners)
         {
-            std::cout << "Initializing BankListener for bank " << bl->bank
-                      << std::endl;
             start(*bl);
         }
     }
@@ -39,8 +35,6 @@ namespace Interrupt
     {
         auto listener = std::shared_ptr<Listener>(
             new Listener(std::move(fds), controller, io_context));
-        std::cout << "Created Listener with " << listener->bankListeners.size()
-                  << " bank listeners." << std::endl;
         listener->init();
         return listener;
     }
@@ -63,8 +57,6 @@ namespace Interrupt
     void Listener::start(BankListener& listener)
     {
         auto self = shared_from_this();
-        std::cout << "Starting async read for bank " << listener.bank
-                  << std::endl;
         listener.descriptor.async_read_some(
             asio::buffer(&listener.irq_buf, 4),
             [this, &listener, self](auto& e, auto bytes_transferred)
@@ -80,8 +72,6 @@ namespace Interrupt
                               << ": " << e.message() << std::endl;
                 }
             });
-        std::cout << "Async read initiated for bank " << listener.bank
-                  << std::endl;
     }
 
     void Listener::processInterrupt(uint32_t bank) const
