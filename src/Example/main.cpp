@@ -10,11 +10,15 @@
 #include "Interrupt/InterruptNodeFinder.hpp"
 #include "Interrupt/Listener.hpp"
 
-const int MAP_SIZE = 65536;
-const int OFFSET = 0x1000;
-
-int main()
+int main(int argc, char* argv[])
 {
+    if (argc < 3)
+    {
+        std::cout << "用法: ./<executable> <MAP_SIZE> <OFFSET>" << std::endl;
+        return -1;
+    }
+    size_t MAP_SIZE = std::stoul(argv[1], nullptr, 0);
+    size_t OFFSET = std::stoul(argv[2], nullptr, 0);
     int fd = open("/dev/xdma0_user", O_RDWR | O_SYNC);
     if (fd < 0)
     {
