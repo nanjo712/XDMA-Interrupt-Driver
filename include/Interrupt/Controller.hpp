@@ -15,8 +15,7 @@ namespace Interrupt
         std::vector<uint64_t*> mailboxes;
 
        public:
-        Controller(uintptr_t base, uint32_t offset = 0x1000,
-                   uint32_t totalBanks = 1);
+        Controller(uintptr_t base, uint32_t offset, uint32_t totalBanks);
         Index getBankIndex(uint32_t interruptNumber) const override;
         void enable(uint32_t interruptNumber) override;
         void disable(uint32_t interruptNumber) override;
