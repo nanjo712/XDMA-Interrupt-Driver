@@ -2,6 +2,7 @@
 
 #include <asio.hpp>
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 
 #include "Interrupt/Controller.hpp"
@@ -34,13 +35,14 @@ int main()
     auto listener =
         Interrupt::Listener::create(std::move(fds), controller, io_context);
     std::cout << "Registering handler for interrupt 0..." << std::endl;
-    listener->registerHandler(
-        0,
-        [](uint64_t data)
-        {
-            std::cout << "Interrupt 0 received with mailbox data: " << data
-                      << std::endl;
-        });
+    listener->registerHandler(0,
+                              [](uint64_t data)
+                              {
+                                  std::cout << "[Mailbox " << 0 << "] 数据: 0x"
+                                            << std::hex << std::setw(16)
+                                            << std::setfill('0') << data
+                                            << std::dec << std::endl;
+                              });
     std::cout << "Waiting for interrupts..." << std::endl;
     io_context.run();
     return 0;
