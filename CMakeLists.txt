@@ -38,9 +38,9 @@ add_executable(Interrupt-Driver-Trigger src/Example/trigger.cpp)
 target_include_directories(Interrupt-Driver-Trigger PRIVATE include)
 target_link_libraries(Interrupt-Driver-Trigger PRIVATE Interrupt-Driver)
 
-add_executable(Interupt-Driver-WriteMailbox src/Example/write_mailbox.cpp)
-target_include_directories(Interupt-Driver-WriteMailbox PRIVATE include)
-target_link_libraries(Interupt-Driver-WriteMailbox PRIVATE Interrupt-Driver)
+add_executable(Interrupt-Driver-WriteMailbox src/Example/write_mailbox.cpp)
+target_include_directories(Interrupt-Driver-WriteMailbox PRIVATE include)
+target_link_libraries(Interrupt-Driver-WriteMailbox PRIVATE Interrupt-Driver)
 
 if (ENABLE_TESTS)
     enable_testing()
