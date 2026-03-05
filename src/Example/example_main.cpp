@@ -55,5 +55,6 @@ int main()
                       << std::endl;
         });
     io_context.run();
+    wait_for_interrupts.join();
     return 0;
 }
