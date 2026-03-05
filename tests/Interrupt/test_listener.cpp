@@ -9,6 +9,7 @@
 #include "Interrupt/IController.hpp"
 #include "Interrupt/Listener.hpp"
 #include "Interrupt/ScopedFd.hpp"
+#include "gmock/gmock.h"
 
 using namespace testing;
 
@@ -23,6 +24,7 @@ namespace Interrupt
         MOCK_METHOD(void, disable, (uint32_t), (override));
         MOCK_METHOD(bool, isEnabled, (uint32_t), (const, override));
         MOCK_METHOD(uint64_t, getMailbox, (uint32_t), (const, override));
+        MOCK_METHOD(void, setMailbox, (uint32_t, uint64_t), (override));
         MOCK_METHOD(void, setPending, (uint32_t), (override));
         MOCK_METHOD(void, clearPending, (uint32_t), (override));
         MOCK_METHOD(uint32_t, getPendingInterrupt, (uint32_t),
