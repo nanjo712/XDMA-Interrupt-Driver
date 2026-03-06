@@ -81,32 +81,46 @@ namespace Interrupt
         {
             return;
         }
-        controller.cleanPendingBank(bank, pending_bits);
+        struct Event
+        {
+            uint32_t irq_id;
+            uint64_t mailbox_data;
+        };
+        Event events[32];
+        uint32_t event_count = 0;
         for (uint32_t bit = 0; bit < 32; ++bit)
         {
             if (pending_bits & (1u << bit))
             {
                 uint32_t irq_id = bank * 32 + bit;
-                uint64_t mailbox_data = controller.getMailbox(irq_id);
-                std::shared_ptr<Handler> handler = nullptr;
+                events[event_count++] =
+                    Event{.irq_id = irq_id,
+                          .mailbox_data = controller.getMailbox(irq_id)};
+            }
+        }
+        controller.cleanPendingBank(bank, pending_bits);
+        for (uint32_t i = 0; i < event_count; ++i)
+        {
+            uint32_t irq_id = events[i].irq_id;
+            uint64_t mailbox_data = events[i].mailbox_data;
+            std::shared_ptr<Handler> handler = nullptr;
+            {
+                std::shared_lock lock(mutex);
+                if (irq_id < handlers.size() && handlers[irq_id])
                 {
-                    std::shared_lock lock(mutex);
-                    if (irq_id < handlers.size() && handlers[irq_id])
-                    {
-                        handler = handlers[irq_id];
-                    }
+                    handler = handlers[irq_id];
                 }
-                if (handler)
+            }
+            if (handler)
+            {
+                try
                 {
-                    try
-                    {
-                        (*handler)(mailbox_data);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        std::cerr << "Exception in interrupt handler for "
-                                  << irq_id << ": " << e.what() << std::endl;
-                    }
+                    (*handler)(mailbox_data);
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << "Exception in interrupt handler for " << irq_id
+                              << ": " << e.what() << std::endl;
                 }
             }
         }
